@@ -32,4 +32,5 @@ jobs:
           git config user.email github-actions@github.com
           git add badges/start.json
           git commit -m "update start badge" || echo "No changes to commit"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+
