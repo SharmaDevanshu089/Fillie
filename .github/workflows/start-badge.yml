@@ -1,0 +1,35 @@
+name: Update Start Badge
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  badge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get first commit date
+        run: |
+          DATE=$(git log --reverse --format=%ci | head -1 | cut -d' ' -f1)
+          echo "DATE=$DATE" >> $GITHUB_ENV
+
+      - name: Create badge JSON
+        run: |
+          mkdir -p badges
+          echo '{
+            "schemaVersion": 1,
+            "label": "started",
+            "message": "'$DATE'",
+            "color": "blue"
+          }' > badges/start.json
+
+      - name: Commit badge
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add badges/start.json
+          git commit -m "update start badge" || echo "No changes to commit"
+          git push
